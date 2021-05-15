@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+
+    postgres:
+        image: postgres:10-alpine
+        ports:
+            - 5432:5432
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            PGDATA: /var/lib/postgresql/data
+        volumes:
+            - data:/var/lib/postgresql/data:rw
+            - postgresql.conf:/usr/local/share/postgresql/postgresql.conf:ro
+        networks:
+            - postgres-compose-network
+
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - 8080:80
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: admin
+        depends_on:
+            - postgres
+        networks:
+            - postgres-compose-network
+        volumes:
+            - pgadmin:/root/.pgadmin
+
+networks:
+    postgres-compose-network:
+        driver: bridge
+
+volumes:
+    data:
+    postgresql.conf:
+    pgadmin:
